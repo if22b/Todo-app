@@ -98,9 +98,9 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-      - name: Build Docker image using Buildx
+      - name: Build and Push Docker image using Buildx
         run: |
-          docker buildx build --load -t ${{ secrets.DOCKER_HUB_USERNAME }}/todo-frontend:stable -f Dockerfile . --push
+          docker buildx build --push -t ${{ secrets.DOCKER_HUB_USERNAME }}/todo-frontend:stable -f Dockerfile .
 
   deliver:
     needs: build
@@ -109,10 +109,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: List Docker images
+      - name: List Docker images (for verification)
         run: docker images
 
-      - name: Push Docker image to Docker Hub
+      - name: Push Docker image to Docker Hub (if necessary)
         run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/todo-frontend:stable
 
   deploy:
