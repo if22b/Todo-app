@@ -12,11 +12,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-
-      - name: Run SonarQube and Snyk Analysis
+      - name: Run SonarQube Analysis
         env:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -30,8 +28,27 @@ jobs:
             -Dsonar.sources=. \
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-          # Assuming Snyk is also run in Docker or as a separate step
-          npx snyk test
+
+  security-scan:
+    needs: static-code-analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - name: Update dependencies and run Snyk security scan
+        run: |
+          echo "Updating dependencies..."
+          npm install -g npm-check-updates
+          ncu -u
+          npm install
+          npm audit fix
+          echo "Running Snyk security scan..."
+          npx snyk auth ${{ secrets.SNYK_TOKEN }}
+          npx snyk test --all-projects
 
   tests:
     needs: static-code-analysis
