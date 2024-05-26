@@ -31,7 +31,6 @@ jobs:
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
-
   security-scan:
     needs: static-code-analysis
     runs-on: ubuntu-latest
@@ -136,6 +135,6 @@ jobs:
       - name: Deploy to AWS
         run: |
           aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_secret ${ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws configure set region us-west-2
           aws ecs update-service --cluster my-cluster --service my-service --force-new-deployment
