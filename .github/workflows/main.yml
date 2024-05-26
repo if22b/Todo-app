@@ -76,6 +76,7 @@ jobs:
         run: npm run test:coverage
 
   build_and_deliver:
+    needs: tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -95,15 +96,12 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-      - name: Build Docker image using Buildx and load to local Docker daemon
+      - name: Build Docker image using Buildx
         run: |
-          docker buildx build -t ${{ secrets.DOCKER_HUB_USERNAME }}/todo-frontend:stable -f Dockerfile . --load
+          docker buildx build -t ${{ secrets.DOCKER_HUB_USERNAME }}/todo-frontend:stable -f Dockerfile . --load --push
 
       - name: List Docker images for verification
         run: docker images
-
-      - name: Push Docker image to Docker Hub
-        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/todo-frontend:stable
 
   deploy:
     needs: build_and_deliver
