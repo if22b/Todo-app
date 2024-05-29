@@ -3,7 +3,7 @@
     <li>
       <TodoInput @new-todo="post" />
     </li>
-    <li v-for="(todo, i) in todos">
+    <li v-for="(todo, i) in todos" :key="i">
       <Todo :todo="todo"
             @done="done"
             @undone="undone"
@@ -15,44 +15,49 @@
 <script>
 import Todo from "@/components/Todo.vue";
 import TodoInput from "@/components/TodoInput.vue";
-import {createTodo, doneTodo, readTodos, undoneTodo} from "@/api";
+import { createTodo, doneTodo, readTodos, undoneTodo } from "@/api";
+import posthog from "@/posthog"; // Ensure you import posthog instance
 
 export default {
   name: "TodoList",
-  components: {TodoInput, Todo},
+  components: { TodoInput, Todo },
   data() {
     return {
-      todos: []
-    }
+      todos: [],
+      isSortingEnabled: false
+    };
   },
   methods: {
     async getAll() {
-      this.todos = await readTodos();
+      let todos = await readTodos();
+      if (this.isSortingEnabled) {
+        todos.sort((a, b) => {
+          return a.done === b.done ? 0 : a.done ? 1 : -1;
+        });
+      }
+      this.todos = todos;
     },
     async post(name) {
-      var todo = await createTodo(name);
+      const todo = await createTodo(name);
       this.todos.push(todo);
     },
     async done(id) {
-      var todo = await doneTodo(id);
+      const todo = await doneTodo(id);
       this.update(id, todo);
     },
     async undone(id) {
-      var todo = await undoneTodo(id);
+      const todo = await undoneTodo(id);
       this.update(id, todo);
     },
     update(id, todo) {
-      this.todos.forEach((value, i) => {
-        if (value.id === id) {
-          this.todos[i] = todo;
-        }
-      });
+      this.todos = this.todos.map((t) => (t.id === id ? todo : t));
     }
   },
-  created() {
+  async created() {
+    this.isSortingEnabled = await posthog.isFeatureEnabled('todo_sorting');
     this.getAll();
   }
-}
+};
 </script>
 
 <style scoped>
