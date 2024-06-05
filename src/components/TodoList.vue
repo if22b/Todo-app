@@ -16,7 +16,7 @@
 import Todo from "@/components/Todo.vue";
 import TodoInput from "@/components/TodoInput.vue";
 import { createTodo, doneTodo, readTodos, undoneTodo } from "@/api";
-import posthog from "@/posthog"; // Ensure you import posthog instance
+import posthog from '@/plugins/posthog';
 
 export default {
   name: "TodoList",
