@@ -5,5 +5,4 @@ services:
     ports:
       - "80:80"
     environment:
-      - VUE_APP_API_URL=${BACKEND_EC2_IP}
-      
+      - VUE_APP_API_URL=http://${BACKEND_EC2_IP}:3000
