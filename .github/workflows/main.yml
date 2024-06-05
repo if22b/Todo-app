@@ -30,7 +30,6 @@ jobs:
             -Dsonar.sources=. \
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-
   security-scan:
     needs: static-code-analysis
     runs-on: ubuntu-latest
@@ -41,7 +40,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '18'
+          node-version: '16'
 
       - name: Update dependencies and run Snyk security scan
         run: |
@@ -53,7 +52,6 @@ jobs:
           echo "Running Snyk security scan..."
           npx snyk auth ${{ secrets.SNYK_TOKEN }}
           npx snyk test --all-projects
-
   tests:
     needs: security-scan
     runs-on: ubuntu-latest
@@ -64,7 +62,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '18'
+          node-version: '16'
 
       - name: Install dependencies
         run: npm install
@@ -119,6 +117,7 @@ jobs:
         run: |
           echo "${{ env.SSH_PRIVATE_KEY }}" > private_key.pem
           chmod 600 private_key.pem
+          mkdir -p ~/.ssh
           ssh-keyscan -H ${{ env.FRONTEND_EC2_IP }} >> ~/.ssh/known_hosts
           scp -i private_key.pem docker-compose.yml ubuntu@${{ env.FRONTEND_EC2_IP }}:/home/ubuntu/docker-compose.yml
           ssh -i private_key.pem ubuntu@${{ env.FRONTEND_EC2_IP }} 'export DB_HOST=${{ env.DB_HOST }} && export DB_USER=${{ env.DB_USER }} && export DB_PASSWORD=${{ env.DB_PASSWORD }} && export DB_NAME=${{ env.DB_NAME }} && docker-compose -f /home/ubuntu/docker-compose.yml pull && docker-compose -f /home/ubuntu/docker-compose.yml up -d'
