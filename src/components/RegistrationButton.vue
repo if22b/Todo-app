@@ -3,7 +3,7 @@
   </template>
   
   <script>
-  import posthog from "@/posthog";
+  import posthog from '@/plugins/posthog';
   
   export default {
     name: "RegistrationButton",
