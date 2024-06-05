@@ -1,41 +1,57 @@
 import axios from "axios";
 
-const readTodos = async () => {
-  let res = await axios.get('http://localhost:8080/todos');
+const baseURL = process.env.BACKEND_EC2_IP ? `http://${process.env.BACKEND_EC2_IP}:3000` : 'http://localhost:3000';
 
-  return res.data;
+const apiClient = axios.create({
+  baseURL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+const readTodos = async () => {
+  try {
+    let res = await apiClient.get('/todos');
+    return res.data;
+  } catch (error) {
+    console.error("Failed to read todos:", error);
+    throw error;
+  }
 }
 
 const createTodo = async (name) => {
-    let res = await axios.post(
-        'http://localhost:8080/todos',
-        {
-            'name': name
-        }
-    );
-
+  try {
+    let res = await apiClient.post('/todos', { name });
     return res.data;
+  } catch (error) {
+    console.error("Failed to create todo:", error);
+    throw error;
+  }
 }
 
 const doneTodo = async (id) => {
-    let res = await axios.put(
-        `http://localhost:8080/todos/${id}/done`
-    );
-
+  try {
+    let res = await apiClient.put(`/todos/${id}/done`);
     return res.data;
+  } catch (error) {
+    console.error("Failed to mark todo as done:", error);
+    throw error;
+  }
 }
 
 const undoneTodo = async (id) => {
-    let res = await axios.delete(
-        `http://localhost:8080/todos/${id}/done`
-    );
-
+  try {
+    let res = await apiClient.delete(`/todos/${id}/done`);
     return res.data;
+  } catch (error) {
+    console.error("Failed to mark todo as undone:", error);
+    throw error;
+  }
 }
 
 export {
-    readTodos,
-    createTodo,
-    doneTodo,
-    undoneTodo
+  readTodos,
+  createTodo,
+  doneTodo,
+  undoneTodo
 }
