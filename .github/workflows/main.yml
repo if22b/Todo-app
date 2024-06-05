@@ -114,7 +114,7 @@ jobs:
           FRONTEND_EC2_IP: ${{ secrets.FRONTEND_EC2_IP }}
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_USER: ${{ secrets.DB_USER }}
-          DB_PASS: ${{ secrets.DB_PASS }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_NAME: ${{ secrets.DB_NAME }}
         run: |
           echo "${{ env.SSH_PRIVATE_KEY }}" > private_key.pem
