@@ -106,10 +106,18 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Deploy to AWS
+  
+      - name: Deploy to EC2 Frontend Instance
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          FRONTEND_EC2_IP: ${{ secrets.FRONTEND_EC2_IP }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASS: ${{ secrets.DB_PASS }}
+          DB_NAME: ${{ secrets.DB_NAME }}
         run: |
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set region us-west-2
-          aws ecs update-service --cluster my-cluster --service my-service --force-new-deployment
+          echo "${{ env.SSH_PRIVATE_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
+          scp -i private_key.pem docker-compose.yml ubuntu@${{ env.FRONTEND_EC2_IP }}:/home/ubuntu/docker-compose.yml
+          ssh -i private_key.pem ubuntu@${{ env.FRONTEND_EC2_IP }} 'export DB_HOST=${{ env.DB_HOST }} && export DB_USER=${{ env.DB_USER }} && export DB_PASS=${{ env.DB_PASS }} && export DB_NAME=${{ env.DB_NAME }} && docker-compose -f /home/ubuntu/docker-compose.yml pull && docker-compose -f /home/ubuntu/docker-compose.yml up -d'
+
