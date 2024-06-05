@@ -13,7 +13,9 @@ RUN npm install
 # Copy the rest of the application files
 COPY . .
 
-# Build the application
+# Build the application with the backend API URL
+ARG VUE_APP_API_URL
+ENV VUE_APP_API_URL=$VUE_APP_API_URL
 RUN npm run build
 
 # Use a lightweight web server to serve the built application

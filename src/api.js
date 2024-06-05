@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseURL = process.env.BACKEND_EC2_IP ? `http://${process.env.BACKEND_EC2_IP}:3000` : 'http://localhost:3000';
+const baseURL = process.env.VUE_APP_API_URL || 'http://localhost:3000';
 
 const apiClient = axios.create({
   baseURL,
