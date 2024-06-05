@@ -1,26 +1,27 @@
-# Base image
-FROM node:16-alpine
+# Use the official Node.js image as the base image
+FROM node:14
 
-# Set working directory
+# Set the working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
+# Copy package.json and package-lock.json files
 COPY package*.json ./
 
 # Install dependencies
 RUN npm install
 
-# Copy the project files into the container
+# Copy the rest of the application files
 COPY . .
 
-# Build the app
+# Build the application
 RUN npm run build
 
-# Install a static server to serve the build
-RUN npm install -g http-server
+# Use a lightweight web server to serve the built application
+FROM nginx:alpine
+COPY --from=0 /app/dist /usr/share/nginx/html
 
-# Expose port 80
+# Expose the port the app runs on
 EXPOSE 80
 
-# Run the server
-CMD ["http-server", "dist", "-p 80"]
+# Command to run the app
+CMD ["nginx", "-g", "daemon off;"]

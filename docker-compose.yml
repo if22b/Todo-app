@@ -1,0 +1,6 @@
+version: '3'
+services:
+  frontend:
+    image: if22b133/todo-frontend:stable
+    ports:
+      - "80:80"
