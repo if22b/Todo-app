@@ -1,3 +1,4 @@
+/*
 import posthog from 'posthog-js';
 
 export default {
@@ -9,3 +10,4 @@ export default {
     app.config.globalProperties.$posthog = posthog;
   },
 };
+*/

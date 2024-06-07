@@ -3,7 +3,7 @@
   </template>
   
   <script>
-  import posthog from '@/plugins/posthog';
+  // import posthog from '@/plugins/posthog';
   
   export default {
     name: "RegistrationButton",
@@ -14,9 +14,9 @@
       };
     },
     async created() {
-      const isVariantB = await posthog.isFeatureEnabled('register_button_variant_b');
-      this.variantClass = isVariantB ? 'variant-b' : 'variant-a';
-      this.headline = isVariantB ? 'Sign Up Now!' : 'Register';
+      // const isVariantB = await posthog.isFeatureEnabled('register_button_variant_b');
+      // this.variantClass = isVariantB ? 'variant-b' : 'variant-a';
+      // this.headline = isVariantB ? 'Sign Up Now!' : 'Register';
     }
   };
   </script>

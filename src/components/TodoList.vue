@@ -16,7 +16,7 @@
 import Todo from "@/components/Todo.vue";
 import TodoInput from "@/components/TodoInput.vue";
 import { createTodo, doneTodo, readTodos, undoneTodo } from "@/api";
-import posthog from '@/plugins/posthog';
+// import posthog from '@/plugins/posthog';
 
 export default {
   name: "TodoList",
@@ -54,7 +54,7 @@ export default {
     }
   },
   async created() {
-    this.isSortingEnabled = await posthog.isFeatureEnabled('todo_sorting');
+    // this.isSortingEnabled = await posthog.isFeatureEnabled('todo_sorting');
     this.getAll();
   }
 };
