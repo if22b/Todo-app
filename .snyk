@@ -1,6 +1,0 @@
-version: v1.18.2
-ignore:
-  "SNYK-JS-PUGCODEGEN-7086056":
-    - "*":
-        reason: "No fix available, will monitor for updates"
-        expires: "2024-12-31T00:00:00Z"
