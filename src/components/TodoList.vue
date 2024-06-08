@@ -1,22 +1,24 @@
 <template>
-  <ul>
-    <li>
-      <TodoInput @new-todo="post" />
-    </li>
-    <li v-for="(todo, i) in todos" :key="i">
-      <Todo :todo="todo"
-            @done="done"
-            @undone="undone"
-      />
-    </li>
-  </ul>
+  <div>
+    <h2>Your Todos</h2>
+    <ul>
+      <li>
+        <TodoInput @new-todo="post" />
+      </li>
+      <li v-for="(todo, i) in todos" :key="i">
+        <Todo :todo="todo"
+              @done="done"
+              @undone="undone"
+        />
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script>
 import Todo from "@/components/Todo.vue";
 import TodoInput from "@/components/TodoInput.vue";
 import { createTodo, doneTodo, readTodos, undoneTodo } from "@/api";
-// import posthog from '@/plugins/posthog';
 
 export default {
   name: "TodoList",
@@ -29,33 +31,48 @@ export default {
   },
   methods: {
     async getAll() {
-      let todos = await readTodos();
-      if (this.isSortingEnabled) {
-        todos.sort((a, b) => {
-          return a.done === b.done ? 0 : a.done ? 1 : -1;
-        });
+      try {
+        let todos = await readTodos();
+        if (this.isSortingEnabled) {
+          todos.sort((a, b) => {
+            return a.done === b.done ? 0 : a.done ? 1 : -1;
+          });
+        }
+        this.todos = todos;
+      } catch (error) {
+        console.error("Failed to fetch todos:", error);
       }
-      this.todos = todos;
     },
     async post(name) {
-      const todo = await createTodo(name);
-      this.todos.push(todo);
+      try {
+        const todo = await createTodo(name);
+        this.todos.push(todo);
+      } catch (error) {
+        console.error("Failed to create todo:", error);
+      }
     },
     async done(id) {
-      const todo = await doneTodo(id);
-      this.update(id, todo);
+      try {
+        const todo = await doneTodo(id);
+        this.update(id, todo);
+      } catch (error) {
+        console.error("Failed to mark todo as done:", error);
+      }
     },
     async undone(id) {
-      const todo = await undoneTodo(id);
-      this.update(id, todo);
+      try {
+        const todo = await undoneTodo(id);
+        this.update(id, todo);
+      } catch (error) {
+        console.error("Failed to mark todo as undone:", error);
+      }
     },
     update(id, todo) {
       this.todos = this.todos.map((t) => (t.id === id ? todo : t));
     }
   },
   async created() {
-    // this.isSortingEnabled = await posthog.isFeatureEnabled('todo_sorting');
-    this.getAll();
+    await this.getAll();
   }
 };
 </script>

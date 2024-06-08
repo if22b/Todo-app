@@ -1,9 +1,10 @@
-import { createApp } from 'vue'
-import App from './App.vue'
-import './assets/main.css'
-// import posthogPlugin from "./plugins/posthog"; //import the plugin. 
+// src/main.js
+import { createApp } from 'vue';
+import App from './App.vue';
+import router from './router';
+import './assets/main.css';
 
 const app = createApp(App);
 
-// app.use(posthogPlugin); //install the plugin
-app.mount('#app')
+app.use(router);
+app.mount('#app');
