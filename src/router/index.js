@@ -1,19 +1,17 @@
-// src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router';
-import Register from '@/components/Register.vue';
-import Login from '@/components/Login.vue';
+import RegisterForm from '@/components/RegisterForm.vue';
+import LoginForm from '@/components/LoginForm.vue';
 import TodoList from '@/components/TodoList.vue';
 
 const routes = [
-  { path: '/register', component: Register },
-  { path: '/login', component: Login },
-  { path: '/todos', component: TodoList },
-  { path: '/', redirect: '/login' }
+  { path: '/', name: 'Home', component: TodoList },
+  { path: '/register', name: 'Register', component: RegisterForm },
+  { path: '/login', name: 'Login', component: LoginForm }
 ];
 
 const router = createRouter({
   history: createWebHistory(),
-  routes,
+  routes
 });
 
 export default router;
