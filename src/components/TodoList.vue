@@ -31,9 +31,8 @@ export default {
   },
   methods: {
     async getAll() {
-      const userId = localStorage.getItem('userId');
       try {
-        let todos = await readTodos(userId);
+        let todos = await readTodos();
         if (this.isSortingEnabled) {
           todos.sort((a, b) => {
             return a.done === b.done ? 0 : a.done ? 1 : -1;
@@ -45,27 +44,24 @@ export default {
       }
     },
     async post(name) {
-      const userId = localStorage.getItem('userId');
       try {
-        const todo = await createTodo(name, userId);
+        const todo = await createTodo(name);
         this.todos.push(todo);
       } catch (error) {
         console.error("Failed to create todo:", error);
       }
     },
     async done(id) {
-      const userId = localStorage.getItem('userId');
       try {
-        const todo = await doneTodo(id, userId);
+        const todo = await doneTodo(id);
         this.update(id, todo);
       } catch (error) {
         console.error("Failed to mark todo as done:", error);
       }
     },
     async undone(id) {
-      const userId = localStorage.getItem('userId');
       try {
-        const todo = await undoneTodo(id, userId);
+        const todo = await undoneTodo(id);
         this.update(id, todo);
       } catch (error) {
         console.error("Failed to mark todo as undone:", error);

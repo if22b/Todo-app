@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 
 const baseURL = process.env.VUE_APP_API_URL || 'http://3.224.49.231:3000';
 
@@ -7,6 +7,17 @@ const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+});
+
+// Interceptor to add token to each request if available
+apiClient.interceptors.request.use(config => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+}, error => {
+  return Promise.reject(error);
 });
 
 // Function to handle registration
@@ -32,11 +43,9 @@ export const loginUser = async (username, password) => {
 };
 
 // Function to read todos
-export const readTodos = async (userId) => {
+export const readTodos = async () => {
   try {
-    const response = await apiClient.get('/todos', {
-      headers: { 'user-id': userId }
-    });
+    const response = await apiClient.get('/todos');
     return response.data;
   } catch (error) {
     console.error("Failed to read todos:", error);
@@ -45,11 +54,9 @@ export const readTodos = async (userId) => {
 };
 
 // Function to create a new todo
-export const createTodo = async (name, userId) => {
+export const createTodo = async (name) => {
   try {
-    const response = await apiClient.post('/todos', { name }, {
-      headers: { 'user-id': userId }
-    });
+    const response = await apiClient.post('/todos', { name });
     return response.data;
   } catch (error) {
     console.error("Failed to create todo:", error);
@@ -58,11 +65,9 @@ export const createTodo = async (name, userId) => {
 };
 
 // Function to mark a todo as done
-export const doneTodo = async (id, userId) => {
+export const doneTodo = async (id) => {
   try {
-    const response = await apiClient.put(`/todos/${id}/done`, {}, {
-      headers: { 'user-id': userId }
-    });
+    const response = await apiClient.put(`/todos/${id}/done`);
     return response.data;
   } catch (error) {
     console.error("Failed to mark todo as done:", error);
@@ -71,11 +76,9 @@ export const doneTodo = async (id, userId) => {
 };
 
 // Function to mark a todo as undone
-export const undoneTodo = async (id, userId) => {
+export const undoneTodo = async (id) => {
   try {
-    const response = await apiClient.delete(`/todos/${id}/done`, {
-      headers: { 'user-id': userId }
-    });
+    const response = await apiClient.delete(`/todos/${id}/done`);
     return response.data;
   } catch (error) {
     console.error("Failed to mark todo as undone:", error);

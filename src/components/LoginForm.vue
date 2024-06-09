@@ -30,7 +30,7 @@ export default {
     async login() {
       try {
         const response = await loginUser(this.username, this.password);
-        localStorage.setItem('userId', response.userId);
+        localStorage.setItem('token', response.token);
         this.$router.push('/'); // Redirect to home or todo list after successful login
       } catch (error) {
         console.error('Login failed:', error);
