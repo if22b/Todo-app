@@ -18,9 +18,14 @@ ARG VUE_APP_API_URL
 ENV VUE_APP_API_URL=$VUE_APP_API_URL
 RUN npm run build
 
-# Use a lightweight web server to serve the built application
+# Stage 2: Serve the application using Nginx
 FROM nginx:alpine
-COPY --from=0 /app/dist /usr/share/nginx/html
+
+# Copy the built files from the previous stage
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Copy custom Nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
 
 # Expose the port the app runs on
 EXPOSE 80
