@@ -1,5 +1,5 @@
-# Use the official Node.js image as the base image
-FROM node:18
+# Stage 1: Build the Vue.js application
+FROM node:18 AS builder
 
 # Set the working directory
 WORKDIR /app
@@ -22,7 +22,7 @@ RUN npm run build
 FROM nginx:alpine
 
 # Copy the built files from the previous stage
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Copy custom Nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf
