@@ -1,12 +1,10 @@
 <script setup>
-import TodoList from "@/components/TodoList.vue";
-import RegistrationButton from "@/components/RegistrationButton.vue";
+import { RouterView } from 'vue-router';
 </script>
 
 <template>
   <main>
-    <TodoList />
-    <RegistrationButton />
+    <RouterView />
   </main>
 </template>
 

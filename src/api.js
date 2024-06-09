@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 
 const baseURL = 'http://3.224.49.231:3000' || 'http://localhost:3000';
 
@@ -24,6 +24,9 @@ export const registerUser = async (username, password) => {
 export const loginUser = async (username, password) => {
   try {
     const response = await apiClient.post('/auth/login', { username, password });
+    if (response.data.userId) {
+      localStorage.setItem('userId', response.data.userId);
+    }
     return response.data;
   } catch (error) {
     console.error("Login failed:", error);
