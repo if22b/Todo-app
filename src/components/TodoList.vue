@@ -31,7 +31,7 @@ export default {
   },
   computed: {
     sortedTodos() {
-      if (this.$posthog.isFeatureEnabled('sort-todos-by-date')) {
+      if (this.isSortingEnabled) {
         return this.todos.sort((a, b) => {
           if (a.done === b.done) {
             return new Date(a.createdAt) - new Date(b.createdAt);
@@ -83,7 +83,11 @@ export default {
     }
   },
   async created() {
-    await this.getAll();
+    // Ensure flags are loaded before usage.
+    this.$posthog.onFeatureFlags(() => {
+      this.isSortingEnabled = this.$posthog.isFeatureEnabled('sort-todos-by-date');
+      this.getAll();
+    });
   }
 };
 </script>
