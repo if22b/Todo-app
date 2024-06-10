@@ -19,7 +19,6 @@
 import Todo from "@/components/Todo.vue";
 import TodoInput from "@/components/TodoInput.vue";
 import { createTodo, doneTodo, readTodos, undoneTodo } from "@/api";
-import posthog from "posthog-js";
 
 export default {
   name: "TodoList",
@@ -27,34 +26,30 @@ export default {
   data() {
     return {
       todos: [],
-      isSortingEnabled: false,
-      featureToggle: false
+      isSortingEnabled: false
     };
   },
   computed: {
     sortedTodos() {
-      if (!this.featureToggle) {
-        return this.todos;
+      if (this.$posthog.isFeatureEnabled('sort-todos-by-date')) {
+        return this.todos.sort((a, b) => {
+          if (a.done === b.done) {
+            return new Date(a.createdAt) - new Date(b.createdAt);
+          }
+          return a.done ? 1 : -1;
+        });
       }
-
-      const today = new Date().setHours(0, 0, 0, 0);
-      return this.todos.sort((a, b) => {
-        const dateA = new Date(a.createdAt).setHours(0, 0, 0, 0);
-        const dateB = new Date(b.createdAt).setHours(0, 0, 0, 0);
-
-        if (a.done && b.done) return dateB - dateA;
-        if (!a.done && !b.done) return dateB - dateA;
-        if (!a.done && dateA < today) return 1;
-        return dateB - dateA;
-      });
+      return this.todos;
     }
   },
   methods: {
     async getAll() {
       try {
         let todos = await readTodos();
-        this.todos = todos;
-        this.checkFeatureToggle();
+        this.todos = todos.map(todo => ({
+          ...todo,
+          createdAt: new Date(todo.createdAt),
+        }));
       } catch (error) {
         console.error("Failed to fetch todos:", error);
       }
@@ -85,9 +80,6 @@ export default {
     },
     update(id, todo) {
       this.todos = this.todos.map((t) => (t.id === id ? todo : t));
-    },
-    checkFeatureToggle() {
-      this.featureToggle = posthog.isFeatureEnabled('todo_sorting_feature');
     }
   },
   async created() {
