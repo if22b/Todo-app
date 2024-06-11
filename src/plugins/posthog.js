@@ -9,5 +9,9 @@ export default {
         api_host: 'https://us.i.posthog.com',
       }
     );
+
+    posthog.onFeatureFlags(() => {
+      console.log('Feature flags are available.');
+    });
   },
 };

@@ -85,7 +85,7 @@ export default {
   async created() {
     // Ensure flags are loaded before usage.
     this.$posthog.onFeatureFlags(() => {
-      this.isSortingEnabled = this.$posthog.isFeatureEnabled('sort-todos-by-date');
+      this.isSortingEnabled = this.$posthog.getFeatureFlag('sort-todos-by-date') === 'example-variant';
       this.getAll();
     });
   }
