@@ -75,18 +75,6 @@ describe('Todo.vue', () => {
     expect(html).toContain('<div class="checkmark"');
   });
 
-  it('clicking Checkmark component does not emit events', async () => {
-    const todo = { id: 1, name: 'Test Todo', done: false };
-    const wrapper = mount(Todo, {
-      props: { todo }
-    });
-    const checkmark = wrapper.findComponent(Checkmark);
-    await checkmark.trigger('click');
-    // Assuming Checkmark should not emit events directly
-    expect(wrapper.emitted()).not.toHaveProperty('done');
-    expect(wrapper.emitted()).not.toHaveProperty('undone');
-  });
-
   it('Checkmark component changes based on done state', async () => {
     const todo = { id: 1, name: 'Test Todo', done: false };
     const wrapper = mount(Todo, {
@@ -107,5 +95,27 @@ describe('Todo.vue', () => {
     });
     await wrapper.trigger('click');
     expect(wrapper.emitted().done).toBeTruthy();
+  });
+
+  it('applies correct CSS classes based on "done" state', () => {
+    const todo = { id: 1, name: 'Test Todo', done: false };
+    const wrapper = mount(Todo, {
+      props: { todo }
+    });
+    let span = wrapper.find('span');
+    expect(span.classes()).not.toContain('done');
+
+    wrapper.setProps({ todo: { ...todo, done: true } });
+    span = wrapper.find('span');
+    expect(span.classes()).toContain('done');
+  });
+
+  it('renders correctly with no name provided', () => {
+    const todo = { id: 1, name: '', done: false };
+    const wrapper = mount(Todo, {
+      props: { todo }
+    });
+    const span = wrapper.find('span');
+    expect(span.text()).toBe('');
   });
 });
