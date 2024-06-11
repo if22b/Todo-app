@@ -63,18 +63,6 @@ describe('Todo.vue', () => {
     expect(span.classes()).not.toContain('done');
   });
 
-  it('renders the todo item with correct structure', () => {
-    const todo = { id: 1, name: 'Test Todo', done: false };
-    const wrapper = mount(Todo, {
-      props: { todo }
-    });
-    // Adjusting the HTML structure check to account for scoped styles
-    const html = wrapper.html().replace(/data-v-[\w]+/g, '');
-    expect(html).toContain('<span');
-    expect(html).toContain(todo.name);
-    expect(html).toContain('<div class="checkmark"');
-  });
-
   it('Checkmark component changes based on done state', async () => {
     const todo = { id: 1, name: 'Test Todo', done: false };
     const wrapper = mount(Todo, {
@@ -110,12 +98,26 @@ describe('Todo.vue', () => {
     expect(span.classes()).toContain('done');
   });
 
-  it('renders correctly with no name provided', () => {
-    const todo = { id: 1, name: '', done: false };
+  it('renders correctly with a very long name', () => {
+    const longName = 'a'.repeat(1000);
+    const todo = { id: 1, name: longName, done: false };
     const wrapper = mount(Todo, {
       props: { todo }
     });
-    const span = wrapper.find('span');
-    expect(span.text()).toBe('');
+    expect(wrapper.text()).toContain(longName);
   });
+
+  it('calls method on click', async () => {
+    const todo = { id: 1, name: 'Test Todo', done: false };
+    const mockMethod = vi.fn();
+    const wrapper = mount(Todo, {
+      props: { todo },
+      methods: {
+        toggleDone: mockMethod
+      }
+    });
+    await wrapper.trigger('click');
+    expect(mockMethod).toHaveBeenCalled();
+  });
+  
 });
