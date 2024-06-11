@@ -68,9 +68,11 @@ describe('Todo.vue', () => {
     const wrapper = mount(Todo, {
       props: { todo }
     });
-    expect(wrapper.html()).toContain('<span');
-    expect(wrapper.html()).toContain(todo.name);
-    expect(wrapper.html()).toContain('<div class="checkmark"');
+    // Adjusting the HTML structure check to account for scoped styles
+    const html = wrapper.html().replace(/data-v-[\w]+/g, '');
+    expect(html).toContain('<span');
+    expect(html).toContain(todo.name);
+    expect(html).toContain('<div class="checkmark"');
   });
 
   it('clicking Checkmark component does not emit events', async () => {
@@ -80,6 +82,7 @@ describe('Todo.vue', () => {
     });
     const checkmark = wrapper.findComponent(Checkmark);
     await checkmark.trigger('click');
+    // Assuming Checkmark should not emit events directly
     expect(wrapper.emitted()).not.toHaveProperty('done');
     expect(wrapper.emitted()).not.toHaveProperty('undone');
   });
