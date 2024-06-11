@@ -44,4 +44,65 @@ describe('Todo.vue', () => {
     });
     expect(wrapper.findComponent(Checkmark).exists()).toBe(true);
   });
+
+  it('Checkmark component has done prop set correctly', () => {
+    const todo = { id: 1, name: 'Test Todo', done: true };
+    const wrapper = mount(Todo, {
+      props: { todo }
+    });
+    const checkmark = wrapper.findComponent(Checkmark);
+    expect(checkmark.props().done).toBe(true);
+  });
+
+  it('does not apply "done" class when todo is not done', () => {
+    const todo = { id: 1, name: 'Test Todo', done: false };
+    const wrapper = mount(Todo, {
+      props: { todo }
+    });
+    const span = wrapper.find('span');
+    expect(span.classes()).not.toContain('done');
+  });
+
+  it('renders the todo item with correct structure', () => {
+    const todo = { id: 1, name: 'Test Todo', done: false };
+    const wrapper = mount(Todo, {
+      props: { todo }
+    });
+    expect(wrapper.html()).toContain('<span');
+    expect(wrapper.html()).toContain(todo.name);
+    expect(wrapper.html()).toContain('<div class="checkmark"');
+  });
+
+  it('clicking Checkmark component does not emit events', async () => {
+    const todo = { id: 1, name: 'Test Todo', done: false };
+    const wrapper = mount(Todo, {
+      props: { todo }
+    });
+    const checkmark = wrapper.findComponent(Checkmark);
+    await checkmark.trigger('click');
+    expect(wrapper.emitted()).not.toHaveProperty('done');
+    expect(wrapper.emitted()).not.toHaveProperty('undone');
+  });
+
+  it('Checkmark component changes based on done state', async () => {
+    const todo = { id: 1, name: 'Test Todo', done: false };
+    const wrapper = mount(Todo, {
+      props: { todo }
+    });
+    let checkmark = wrapper.findComponent(Checkmark);
+    expect(checkmark.props().done).toBe(false);
+
+    await wrapper.setProps({ todo: { ...todo, done: true } });
+    checkmark = wrapper.findComponent(Checkmark);
+    expect(checkmark.props().done).toBe(true);
+  });
+
+  it('emits done event when todo item is clicked', async () => {
+    const todo = { id: 1, name: 'Test Todo', done: false };
+    const wrapper = mount(Todo, {
+      props: { todo }
+    });
+    await wrapper.trigger('click');
+    expect(wrapper.emitted().done).toBeTruthy();
+  });
 });
