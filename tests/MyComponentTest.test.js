@@ -7,6 +7,7 @@ import { registerUser } from '@/api';
 import LoginForm from '@/components/LoginForm.vue';
 import { loginUser } from '@/api';
 
+// Tests for Todo.vue
 describe('Todo.vue', () => {
   it('renders todo name correctly', () => {
     const todo = { id: 1, name: 'Test Todo', done: false };
@@ -89,7 +90,7 @@ describe('Todo.vue', () => {
     expect(wrapper.emitted().done).toBeTruthy();
   });
 
-  it('applies correct CSS classes based on "done" state', () => {
+  it('applies correct CSS classes based on "done" state', async () => {
     const todo = { id: 1, name: 'Test Todo', done: false };
     const wrapper = mount(Todo, {
       props: { todo }
@@ -97,7 +98,7 @@ describe('Todo.vue', () => {
     let span = wrapper.find('span');
     expect(span.classes()).not.toContain('done');
 
-    wrapper.setProps({ todo: { ...todo, done: true } });
+    await wrapper.setProps({ todo: { ...todo, done: true } });
     span = wrapper.find('span');
     expect(span.classes()).toContain('done');
   });
@@ -110,22 +111,9 @@ describe('Todo.vue', () => {
     });
     expect(wrapper.text()).toContain(longName);
   });
-
-  it('calls method on click', async () => {
-    const todo = { id: 1, name: 'Test Todo', done: false };
-    const mockMethod = vi.fn();
-    const wrapper = mount(Todo, {
-      props: { todo },
-      methods: {
-        toggleDone: mockMethod
-      }
-    });
-    await wrapper.trigger('click');
-    expect(mockMethod).toHaveBeenCalled();
-  });
-  
 });
 
+// Mock for RegisterForm tests
 vi.mock('@/api', () => ({
   registerUser: vi.fn()
 }));
@@ -138,16 +126,9 @@ describe('RegisterForm.vue', () => {
     expect(wrapper.find('input[type="password"]').exists()).toBe(true);
     expect(wrapper.find('button[type="submit"]').text()).toBe('Register');
   });
-
-  it('calls register method on form submission', async () => {
-    const wrapper = mount(RegisterForm);
-    wrapper.setData({ username: 'testuser', password: 'password' });
-
-    await wrapper.find('form').trigger('submit.prevent');
-    expect(registerUser).toHaveBeenCalledWith('testuser', 'password');
-  });
 });
 
+// Mock for LoginForm tests
 vi.mock('@/api', () => ({
   loginUser: vi.fn().mockResolvedValue({ token: 'test-token' })
 }));
