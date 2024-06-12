@@ -6,6 +6,7 @@ import RegisterForm from '@/components/RegisterForm.vue';
 import { registerUser } from '@/api';
 import LoginForm from '@/components/LoginForm.vue';
 import { loginUser } from '@/api';
+import { createApp } from 'vue';
 
 // Tests for Todo.vue
 describe('Todo.vue', () => {
@@ -115,16 +116,49 @@ describe('Todo.vue', () => {
 
 // Mock for RegisterForm tests
 vi.mock('@/api', () => ({
-  registerUser: vi.fn()
+  registerUser: vi.fn(),
 }));
 
 describe('RegisterForm.vue', () => {
-  it('renders form elements correctly', () => {
-    const wrapper = mount(RegisterForm);
-    expect(wrapper.find('h2').text()).toBe('Register');
+  const createWrapper = (variant = 'variant-a') => {
+    const app = createApp(RegisterForm);
+
+    // Mock $posthog
+    app.config.globalProperties.$posthog = {
+      getFeatureFlag: vi.fn().mockReturnValue(variant),
+      onFeatureFlags: vi.fn((callback) => callback()),
+    };
+
+    return mount(RegisterForm, {
+      global: {
+        plugins: [{
+          install(app) {
+            app.config.globalProperties.$posthog = {
+              getFeatureFlag: vi.fn().mockReturnValue(variant),
+              onFeatureFlags: vi.fn((callback) => callback()),
+            };
+          }
+        }]
+      },
+    });
+  };
+
+  it('renders form elements correctly for variant-a', () => {
+    const wrapper = createWrapper('variant-a');
+    expect(wrapper.find('h2').text()).toBe('Join Us Now!');
+    expect(wrapper.find('input[type="text"]').exists()).toBe(true);
+    expect(wrapper.find('input[type="password"]').exists()).toBe(true);
+    expect(wrapper.find('button[type="submit"]').text()).toBe('Sign Up');
+    expect(wrapper.find('button').element.style.backgroundColor).toBe('rgb(255, 87, 51)'); // #FF5733
+  });
+
+  it('renders form elements correctly for variant-b', () => {
+    const wrapper = createWrapper('variant-b');
+    expect(wrapper.find('h2').text()).toBe('Get Started Today!');
     expect(wrapper.find('input[type="text"]').exists()).toBe(true);
     expect(wrapper.find('input[type="password"]').exists()).toBe(true);
     expect(wrapper.find('button[type="submit"]').text()).toBe('Register');
+    expect(wrapper.find('button').element.style.backgroundColor).toBe('rgb(51, 255, 87)'); // #33FF57
   });
 });
 
