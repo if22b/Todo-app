@@ -73,3 +73,25 @@ jobs:
 
       - name: Code Coverage
         run: npm run test:coverage
+
+  build:
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker and Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Create and use local Buildx builder
+        run: |
+          docker buildx create --use --name my-local-builder
+          docker buildx inspect --bootstrap
+
+      - name: Build Docker image using Buildx
+        run: |
+          docker buildx build -t my-app:latest --build-arg VUE_APP_API_URL=${{ secrets.BACKEND_EC2_IP }} -f Dockerfile . --load
+
+      - name: List Docker images for verification
+        run: docker images
