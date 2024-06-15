@@ -122,4 +122,3 @@ jobs:
           echo "${{ secrets.BACKEND_EC2_IP }}" > backend_ec2_ip.txt
           scp -i private_key.pem docker-compose.yml backend_ec2_ip.txt ubuntu@${{ env.FRONTEND_EC2_IP }}:/home/ubuntu/
           ssh -i private_key.pem ubuntu@${{ env.FRONTEND_EC2_IP }} 'export BACKEND_EC2_IP=$(cat /home/ubuntu/backend_ec2_ip.txt) && docker-compose -f /home/ubuntu/docker-compose.yml pull && docker-compose -f /home/ubuntu/docker-compose.yml up -d'
-          
