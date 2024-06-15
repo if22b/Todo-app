@@ -1,9 +1,8 @@
-name: CI/CD Pipeline
+name: Deploy/Production Pipeline
 
 on:
   push:
     branches:
-      - main
       - deploy/production
 
 jobs:
@@ -99,6 +98,7 @@ jobs:
       - name: Build Docker image using Buildx
         run: |
           docker buildx build -t ${{ secrets.DOCKER_HUB_USERNAME }}/todo-frontend:stable --build-arg VUE_APP_API_URL=${{ secrets.BACKEND_EC2_IP }} -f Dockerfile . --load --push
+
       - name: List Docker images for verification
         run: docker images
 
@@ -108,7 +108,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        
+
       - name: Deploy to EC2 Frontend Instance
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
