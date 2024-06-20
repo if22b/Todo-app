@@ -6,10 +6,7 @@
         <TodoInput @new-todo="post" />
       </li>
       <li v-for="(todo, i) in sortedTodos" :key="i">
-        <Todo :todo="todo"
-              @done="done"
-              @undone="undone"
-        />
+        <Todo :todo="todo" @done="done" @undone="undone" />
       </li>
     </ul>
   </div>
@@ -45,7 +42,7 @@ export default {
   methods: {
     async getAll() {
       try {
-        let todos = await readTodos();
+        const todos = await readTodos();
         this.todos = todos.map(todo => ({
           ...todo,
           createdAt: new Date(todo.createdAt),
@@ -83,7 +80,6 @@ export default {
     }
   },
   async created() {
-    // Ensure flags are loaded before usage.
     this.$posthog.onFeatureFlags(() => {
       this.isSortingEnabled = this.$posthog.isFeatureEnabled('sort-todos-by-date');
       this.getAll();
