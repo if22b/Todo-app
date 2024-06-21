@@ -95,9 +95,9 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-#      - name: Build Docker image using Buildx
-#        run: |
-#          docker buildx build -t ${{ secrets.DOCKER_HUB_USERNAME }}/todo-frontend:stable --build-arg VUE_APP_API_URL=${{ secrets.BACKEND_EC2_IP }} -f Dockerfile . --load --push
+      - name: Build Docker image using Buildx
+        run: |
+          docker buildx build -t ${{ secrets.DOCKER_HUB_USERNAME }}/todo-frontend:stable --build-arg VUE_APP_API_URL=${{ secrets.BACKEND_EC2_IP }} -f Dockerfile . --load --push
 
       - name: List Docker images for verification
         run: docker images
