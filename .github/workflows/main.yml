@@ -111,7 +111,7 @@ jobs:
 
       - name: Deploy to EC2 Frontend Instance
         env:
-          #SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           FRONTEND_EC2_IP: ${{ secrets.FRONTEND_EC2_IP }}
           BACKEND_EC2_IP: ${{ secrets.BACKEND_EC2_IP }}
         run: |
